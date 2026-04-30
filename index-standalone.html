@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paola Guest Thuile — La Thuile, Valle d'Aosta</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  
+  <!-- Google Translate Widget -->
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'it',
+        includedLanguages: 'en,fr,it',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:   oklch(0.32 0.09 150);
+      --green2:  oklch(0.42 0.09 150);
+      --cream:   oklch(0.97 0.018 82);
+      --cream2:  oklch(0.93 0.022 80);
+      --amber:   oklch(0.64 0.10 68);
+      --wood:    oklch(0.52 0.09 58);
+      --dark:    oklch(0.20 0.03 60);
+      --text:    oklch(0.28 0.025 60);
+      --muted:   oklch(0.55 0.025 60);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      font-weight: 300;
+    }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 400; }
+    #root { overflow-x: hidden; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// Dynamic seasonal claims
+const CLAIMS = {
+  winter: { 
+    title: "Sci, Camino e Relax tra le Alpi",
+    subtitle: "Il rifugio perfetto dopo una giornata sulle piste",
+    season: "INVERNO 2025-2026"
+  },
+  summer: { 
+    title: "Natura, Trekking e Aria Pura",
+    subtitle: "La tua oasi alpina tra boschi e torrenti",
+    season: "ESTATE 2026"
+  }
+};
+
+const REVIEWS = [
+  { score: 10, text: "La casa è bellissima, mi sono sentita subito a mio agio. L'arredamento è tipico di una casa di montagna, tanto legno caldo e avvolgente. C'è tanto spazio e tutto il necessario. Dal giardino si sente il fiume scorrere immerso in un boschetto. Il tutto è circondato dalle montagne.", author: "Silvia", date: "Luglio 2024" },
+  { score: 10, text: "Ottima posizione. Essendo in settimana bianca cercavamo un appartamento a ridosso degli impianti e questo si trova a 5 min a piedi. Ben riscaldato, dotato di bel termo camino, c'è tutto per cucinare. Box privato incluso. Siamo stati talmente bene che vorremmo tornare!", author: "Marco & famiglia", date: "Gennaio 2025" },
+  { score: 10, text: "Très bien décoré. Confortable et cosy. Tout le nécessaire y est.", author: "Pierre", date: "Luglio 2024" },
+  { score: 9, text: "Nice little property in a very good location. The owner Paola is very attentive and helpful. Priced fairly.", author: "James", date: "Gennaio 2025" },
+  { score: 8, text: "Gezellig appartement dat erg compleet is ingericht. De open haard met hout is erg prettig. De locatie is super: wandelend naar de skilift en restaurants op loopafstand.", author: "Dutch family", date: "Gennaio 2026" },
+  { score: 8, text: "Nice and cosy apartment, walking distance from the ski lifts. The kitchen and living room are very well renovated. The fireplace is a great bonus! Paola was helpful and attentive.", author: "Anna", date: "Gennaio 2024" },
+  { score: 8, text: "Appartamento tenuto bene, confortevole e ben attrezzato. Posizione perfetta per raggiungere a piedi sia gli impianti sia il centro. Il condominio è immerso nel verde con bellissima vista sulle montagne.", author: "Roberto", date: "Febbraio 2025" },
+];
+
+const PHOTOS = [
+  { src: "uploads/817149887 (1)-120b8a90.jpg", alt: "Soggiorno con camino" },
+  { src: "uploads/462009119-8abb2e99.jpg",     alt: "Vista sulle Alpi" },
+  { src: "uploads/462009127-03d89294.jpg",     alt: "Torrente e villaggio" },
+  { src: "uploads/462009161-46e00e81.jpg",     alt: "Inverno incantato" },
+  { src: "uploads/462009106-629545cf.jpg",     alt: "Giardino e montagne" },
+  { src: "uploads/462009111-96a8e16e.jpg",     alt: "Camino in pietra" },
+  { src: "uploads/462009198-90b6d772.jpg",     alt: "Camera da letto" },
+  { src: "uploads/817150005-3b927f2e.jpg",     alt: "Tavolo in legno vivo" },
+  { src: "uploads/817149588-78ab6475.jpg",     alt: "Salotto accogliente" },
+];
+
+const AMENITIES = [
+  { icon: "🔥", label: "Camino ventilato", sub: "legna inclusa" },
+  { icon: "🎿", label: "Box ski & auto", sub: "privato" },
+  { icon: "🌿", label: "Giardino privato", sub: "sdraio & barbecue" },
+  { icon: "🛏", label: "2 camere", sub: "6 ospiti" },
+  { icon: "🍽", label: "Cucina completa", sub: "forno, lavastoviglie" },
+  { icon: "☕", label: "Nespresso", sub: "+ bollitore, frullatore" },
+  { icon: "🧺", label: "Lavatrice", sub: "biancheria inclusa" },
+  { icon: "🏔", label: "Fronte piste", sub: "navetta gratuita" },
+  { icon: "☀️", label: "Esposto al sole", sub: "tutto il giorno" },
+  { icon: "🌲", label: "Fronte bosco", sub: "e torrente" },
+  { icon: "🛒", label: "Supermercato", sub: "a pochi passi" },
+  { icon: "📶", label: "Wi-Fi", sub: "incluso" },
+];
+
+/* ── NAV ── */
+function Nav() {
+  const [solid, setSolid] = useState(false);
+  useEffect(() => {
+    const fn = () => setSolid(window.scrollY > 60);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+  return (
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 5vw',
+      height: 64,
+      background: solid ? 'rgba(250,247,242,0.96)' : 'transparent',
+      backdropFilter: solid ? 'blur(8px)' : 'none',
+      transition: 'background 0.4s, box-shadow 0.4s',
+      boxShadow: solid ? '0 1px 16px oklch(0.2 0.03 60 / 0.10)' : 'none',
+    }}>
+      <span style={{
+        fontFamily: 'Playfair Display, serif', fontSize: 18, letterSpacing: '0.04em',
+        color: solid ? 'var(--green)' : '#fff',
+        textShadow: solid ? 'none' : '0 1px 6px rgba(0,0,0,0.4)',
+        transition: 'color 0.4s',
+      }}>Paola Guest <em>Thuile</em></span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div id="google_translate_element" style={{ transform: 'scale(0.85)', transformOrigin: 'right' }}></div>
+        <a href="#booking" style={{
+          padding: '8px 22px', borderRadius: 2,
+          background: solid ? 'var(--green)' : 'rgba(255,255,255,0.18)',
+          border: '1px solid',
+          borderColor: solid ? 'var(--green)' : 'rgba(255,255,255,0.6)',
+          color: solid ? '#fff' : '#fff',
+          textDecoration: 'none', fontSize: 13, letterSpacing: '0.1em',
+          fontFamily: 'Jost, sans-serif', fontWeight: 500,
+          transition: 'all 0.3s',
+        }}>PRENOTA</a>
+      </div>
+    </nav>
+  );
+}
+
+/* ── HERO ── */
+function Hero() {
+  const [idx, setIdx] = useState(0);
+  const heroPhotos = [PHOTOS[0], PHOTOS[1], PHOTOS[3], PHOTOS[4]];
+  
+  // Detect season (Nov-Apr = winter, May-Oct = summer)
+  const month = new Date().getMonth();
+  const isWinter = month >= 10 || month <= 3;
+  const claim = isWinter ? CLAIMS.winter : CLAIMS.summer;
+  
+  useEffect(() => {
+    const t = setInterval(() => setIdx(i => (i + 1) % heroPhotos.length), 4500);
+    return () => clearInterval(t);
+  }, []);
+  
+  return (
+    <section style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+      {heroPhotos.map((p, i) => (
+        <div key={i} style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `url("${p.src}")`,
+          backgroundSize: 'cover', backgroundPosition: 'center',
+          opacity: i === idx ? 1 : 0,
+          transition: 'opacity 1.4s ease',
+        }} />
+      ))}
+      {/* overlay */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to bottom, rgba(10,20,10,0.35) 0%, rgba(10,20,10,0.5) 60%, rgba(10,20,10,0.7) 100%)',
+      }} />
+      <div style={{
+        position: 'relative', zIndex: 2, height: '100%',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        textAlign: 'center', padding: '0 5vw',
+        gap: 16,
+      }}>
+        <p style={{ color: 'rgba(255,255,255,0.75)', letterSpacing: '0.3em', fontSize: 12, fontWeight: 500 }}>{claim.season} · LA THUILE · VALLE D'AOSTA</p>
+        <h1 style={{ color: '#fff', fontSize: 'clamp(38px, 7vw, 88px)', lineHeight: 1.1, textWrap: 'pretty' }}>
+          {claim.title}
+        </h1>
+        <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: 'clamp(14px, 2vw, 18px)', maxWidth: 540, lineHeight: 1.7, fontWeight: 300 }}>
+          {claim.subtitle}
+        </p>
+        <div style={{ display: 'flex', gap: 12, marginTop: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <a href="#booking" style={{
+            padding: '14px 36px',
+            background: 'var(--green)', color: '#fff',
+            textDecoration: 'none', letterSpacing: '0.12em',
+            fontSize: 13, fontWeight: 500, borderRadius: 2,
+          }}>CONTROLLA DISPONIBILITÀ</a>
+          <a href="#gallery" style={{
+            padding: '14px 36px',
+            background: 'transparent', color: '#fff',
+            border: '1px solid rgba(255,255,255,0.6)',
+            textDecoration: 'none', letterSpacing: '0.12em',
+            fontSize: 13, fontWeight: 500, borderRadius: 2,
+          }}>SCOPRI LA CASA</a>
+        </div>
+      </div>
+      {/* dots */}
+      <div style={{ position: 'absolute', bottom: 28, left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 3 }}>
+        {heroPhotos.map((_, i) => (
+          <button key={i} onClick={() => setIdx(i)} style={{
+            width: i === idx ? 24 : 8, height: 8, borderRadius: 4,
+            background: i === idx ? '#fff' : 'rgba(255,255,255,0.45)',
+            border: 'none', cursor: 'pointer',
+            transition: 'width 0.3s, background 0.3s', padding: 0,
+          }} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ── INTRO ── */
+function Intro() {
+  return (
+    <section style={{ padding: '80px 5vw', maxWidth: 960, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
+      <div>
+        <p style={{ color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 16 }}>L'APPARTAMENTO</p>
+        <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 1.25, marginBottom: 24, color: 'var(--dark)' }}>
+          Un chalet autentico,<br /><em>appena ristrutturato</em>
+        </h2>
+        <p style={{ lineHeight: 1.9, color: 'var(--text)', fontSize: 15, marginBottom: 18 }}>
+          Delizioso appartamento montano in stile chalet, recentemente ristrutturato, situato fronte bosco e torrente, in posizione tranquilla e soleggiata.
+        </p>
+        <p style={{ lineHeight: 1.9, color: 'var(--muted)', fontSize: 15, marginBottom: 18 }}>
+          La struttura si trova adiacente alle piste da sci, al parco giochi, al supermercato e ai negozi — ideale per chi desidera una vacanza comoda e immersa nella natura.
+        </p>
+        <p style={{ lineHeight: 1.9, color: 'var(--muted)', fontSize: 15 }}>
+          Dispone di box privato per auto e attrezzatura da sci, e di un ampio giardino privato esposto al sole per l'intera giornata, con sdraio e barbecue.
+        </p>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        <img src="uploads/817149887 (1)-120b8a90.jpg" style={{ width: '100%', aspectRatio: '3/4', objectFit: 'cover', borderRadius: 4 }} alt="Soggiorno" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <img src="uploads/462009198-90b6d772.jpg" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 4 }} alt="Camera" />
+          <img src="uploads/462009111-96a8e16e.jpg" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 4 }} alt="Camino" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── WHY CHOOSE ── */
+function WhyChoose() {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+  
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setVisible(true); },
+      { threshold: 0.15 }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const fadeIn = (delay = 0) => ({
+    opacity:    visible ? 1 : 0,
+    transform:  visible ? 'translateY(0)' : 'translateY(24px)',
+    transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
+  });
+
+  const reasons = [
+    {
+      icon: "🏔️",
+      title: "Posizione unica",
+      desc: "A 5 minuti a piedi dagli impianti di risalita, supermercato, ristoranti. Box privato e navetta gratuita."
+    },
+    {
+      icon: "✨",
+      title: "Recentemente ristrutturato",
+      desc: "Cucina nuova, elettrodomestici moderni, camino ventilato. Il comfort di oggi nel calore di un vero chalet alpino."
+    },
+    {
+      icon: "🌿",
+      title: "Giardino privato esclusivo",
+      desc: "Esposto al sole tutto il giorno, con sdraio, barbecue, e la vista diretta sul torrente e il bosco circostante."
+    },
+    {
+      icon: "🔥",
+      title: "Atmosfera autentica",
+      desc: "Legno caldo, camino a legna incluso, spazi ampi. Un rifugio dove sentirsi subito a casa, lontano dal caos."
+    }
+  ];
+
+  return (
+    <section ref={ref} style={{ padding: '80px 5vw', background: 'var(--cream2)' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <p style={{ ...fadeIn(0), color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 12, textAlign: 'center' }}>PERCHÉ SCEGLIERE</p>
+        <h2 style={{ ...fadeIn(0.1), textAlign: 'center', fontSize: 'clamp(28px, 4vw, 42px)', marginBottom: 16, color: 'var(--dark)' }}>
+          La scelta giusta per la tua vacanza
+        </h2>
+        <p style={{ ...fadeIn(0.2), textAlign: 'center', color: 'var(--muted)', fontSize: 15, marginBottom: 48, maxWidth: 680, margin: '0 auto 48px' }}>
+          Non un semplice appartamento, ma un'esperienza alpina autentica pensata per chi cerca comfort, tranquillità e vicinanza alla natura.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 32 }}>
+          {reasons.map((r, i) => (
+            <div key={i} style={{
+              ...fadeIn(0.3 + i * 0.1),
+              textAlign: 'center',
+              padding: '32px 24px',
+            }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>{r.icon}</div>
+              <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--dark)', marginBottom: 12, fontFamily: 'Playfair Display, serif' }}>{r.title}</h3>
+              <p style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--muted)' }}>{r.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── REVIEWS ── */
+function Reviews() {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+  
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) setVisible(true); },
+      { threshold: 0.1 }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const fadeIn = (delay = 0) => ({
+    opacity:    visible ? 1 : 0,
+    transform:  visible ? 'translateY(0)' : 'translateY(24px)',
+    transition: `opacity 0.7s ease ${delay}s, transform 0.7s ease ${delay}s`,
+  });
+
+  return (
+    <section ref={ref} style={{ padding: '80px 5vw' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <p style={{ ...fadeIn(0), color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 12, textAlign: 'center' }}>COSA DICONO GLI OSPITI</p>
+        <h2 style={{ ...fadeIn(0.1), textAlign: 'center', fontSize: 'clamp(28px, 4vw, 42px)', marginBottom: 48, color: 'var(--dark)' }}>
+          Recensioni verificate
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
+          {REVIEWS.map((r, i) => (
+            <div key={i} style={{
+              ...fadeIn(0.2 + i * 0.08),
+              background: '#fff',
+              padding: '28px 24px',
+              borderRadius: 6,
+              boxShadow: '0 2px 16px oklch(0.2 0.03 60 / 0.06)',
+              border: '1px solid var(--cream2)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                <div style={{ 
+                  background: 'var(--green)', 
+                  color: '#fff', 
+                  padding: '6px 12px', 
+                  borderRadius: 3, 
+                  fontSize: 15, 
+                  fontWeight: 600 
+                }}>{r.score}/10</div>
+                <div style={{ flex: 1, fontSize: 12, color: 'var(--muted)' }}>{r.date}</div>
+              </div>
+              <p style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--text)', marginBottom: 12 }}>"{r.text}"</p>
+              <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--dark)' }}>— {r.author}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── AMENITIES ── */
+function Amenities() {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+  
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true);
+        }
+      },
+      { threshold: 0.2, rootMargin: '-50px' }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const fadeIn = (delay = 0) => ({
+    opacity:    visible ? 1 : 0,
+    transform:  visible ? 'translateY(0)' : 'translateY(28px)',
+    transition: `opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${delay}s, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${delay}s`,
+  });
+
+  return (
+    <section ref={ref} style={{ background: 'var(--green)', padding: '72px 5vw' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <p style={{ ...fadeIn(0.1), color: 'var(--cream)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 12, textAlign: 'center' }}>DOTAZIONI</p>
+        <h2 style={{ ...fadeIn(0.2), color: 'var(--cream)', textAlign: 'center', fontSize: 'clamp(24px, 3vw, 38px)', marginBottom: 48 }}>Tutto il comfort per la vostra vacanza</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 20 }}>
+          {AMENITIES.map((a, i) => (
+            <div key={i} style={{
+              ...fadeIn(0.3 + i * 0.06),
+              background: 'rgba(255,255,255,0.06)', borderRadius: 4, padding: '20px 18px',
+              border: '1px solid rgba(255,255,255,0.12)',
+            }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>{a.icon}</div>
+              <div style={{ color: 'var(--cream)', fontWeight: 500, fontSize: 14, marginBottom: 2 }}>{a.label}</div>
+              <div style={{ color: 'oklch(0.87 0.025 90)', fontSize: 12 }}>{a.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── GALLERY ── */
+function Gallery() {
+  const [open, setOpen] = useState(null);
+  return (
+    <section id="gallery" style={{ padding: '80px 5vw', maxWidth: 1200, margin: '0 auto' }}>
+      <p style={{ color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 12, textAlign: 'center' }}>GALLERIA</p>
+      <h2 style={{ textAlign: 'center', fontSize: 'clamp(24px, 3vw, 38px)', marginBottom: 40, color: 'var(--dark)' }}>La casa e i dintorni</h2>
+      <div style={{ columns: '3 280px', gap: 10 }}>
+        {PHOTOS.map((p, i) => (
+          <img key={i} src={p.src} alt={p.alt}
+            onClick={() => setOpen(i)}
+            style={{
+              width: '100%', display: 'block', marginBottom: 10,
+              borderRadius: 3, cursor: 'zoom-in',
+              transition: 'opacity 0.2s, transform 0.3s',
+              objectFit: 'cover',
+            }}
+            onMouseOver={e => { e.currentTarget.style.opacity = '0.88'; e.currentTarget.style.transform = 'scale(1.01)'; }}
+            onMouseOut={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'scale(1)'; }}
+          />
+        ))}
+      </div>
+      {open !== null && (
+        <div onClick={() => setOpen(null)} style={{
+          position: 'fixed', inset: 0, background: 'rgba(10,15,10,0.93)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, cursor: 'zoom-out',
+        }}>
+          <button onClick={e => { e.stopPropagation(); setOpen(o => (o - 1 + PHOTOS.length) % PHOTOS.length); }}
+            style={{ position: 'absolute', left: 20, background: 'none', border: 'none', color: '#fff', fontSize: 36, cursor: 'pointer' }}>‹</button>
+          <img src={PHOTOS[open].src} alt={PHOTOS[open].alt}
+            style={{ maxHeight: '90vh', maxWidth: '90vw', borderRadius: 4, objectFit: 'contain' }} />
+          <button onClick={e => { e.stopPropagation(); setOpen(o => (o + 1) % PHOTOS.length); }}
+            style={{ position: 'absolute', right: 20, background: 'none', border: 'none', color: '#fff', fontSize: 36, cursor: 'pointer' }}>›</button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/* ── BOOKING CALENDAR ── */
+const MONTH_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const DAY_IT   = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+
+// Fake booked ranges (owner can extend this)
+const BOOKED_RANGES = [
+  { from: new Date(2025, 6, 12), to: new Date(2025, 6, 26) },
+  { from: new Date(2025, 11, 20), to: new Date(2026, 0, 10) },
+  { from: new Date(2026, 0, 24), to: new Date(2026, 1, 7) },
+];
+
+function isBooked(date) {
+  return BOOKED_RANGES.some(r => date >= r.from && date <= r.to);
+}
+function isPast(date) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  return date < today;
+}
+function sameDay(a, b) {
+  return a && b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+function inRange(date, start, end) {
+  if (!start || !end) return false;
+  const [a, b] = start <= end ? [start, end] : [end, start];
+  return date > a && date < b;
+}
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function diffDays(a, b) { return Math.round((b - a) / 86400000); }
+function formatDate(d) {
+  if (!d) return '';
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+function CalendarMonth({ year, month, checkin, checkout, hovering, onSelect, onHover }) {
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month + 1, 0);
+  // Monday-based offset
+  let startDow = firstDay.getDay(); if (startDow === 0) startDow = 7;
+  const cells = [];
+  for (let i = 1; i < startDow; i++) cells.push(null);
+  for (let d = 1; d <= lastDay.getDate(); d++) cells.push(new Date(year, month, d));
+
+  const rangeEnd = hovering || checkout;
+
+  return (
+    <div style={{ flex: '1 1 280px', minWidth: 260 }}>
+      <div style={{ textAlign: 'center', fontFamily: 'Playfair Display, serif', fontSize: 17, color: 'var(--dark)', marginBottom: 16 }}>
+        {MONTH_IT[month]} {year}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 2, marginBottom: 6 }}>
+        {DAY_IT.map(d => (
+          <div key={d} style={{ textAlign: 'center', fontSize: 11, color: 'var(--muted)', padding: '4px 0', letterSpacing: '0.05em' }}>{d}</div>
+        ))}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 2 }}>
+        {cells.map((date, i) => {
+          if (!date) return <div key={`e${i}`} />;
+          const past    = isPast(date);
+          const booked  = isBooked(date);
+          const disabled = past || booked;
+          const isIn    = sameDay(date, checkin);
+          const isOut   = sameDay(date, checkout);
+          const inBetween = checkin && !checkout && inRange(date, checkin, rangeEnd);
+          const inFinal   = checkin && checkout && inRange(date, checkin, checkout);
+          const highlight = isIn || isOut;
+          let bg = 'transparent', color = disabled ? '#ccc' : 'var(--text)', textDecoration = 'none';
+          if (booked) { bg = 'oklch(0.92 0.01 60)'; textDecoration = 'line-through'; }
+          if (inBetween || inFinal) { bg = 'oklch(0.88 0.05 150)'; color = 'var(--green)'; }
+          if (highlight) { bg = 'var(--green)'; color = '#fff'; }
+          return (
+            <div key={i}
+              onClick={() => !disabled && onSelect(date)}
+              onMouseEnter={() => !disabled && onHover(date)}
+              onMouseLeave={() => onHover(null)}
+              style={{
+                textAlign: 'center', padding: '7px 2px', borderRadius: 3,
+                fontSize: 13, fontWeight: highlight ? 500 : 300,
+                background: bg, color, textDecoration,
+                cursor: disabled ? 'default' : 'pointer',
+                transition: 'background 0.15s',
+                userSelect: 'none',
+              }}
+            >{date.getDate()}</div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function Booking() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const [viewYear,  setViewYear]  = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [checkin,  setCheckin]  = useState(null);
+  const [checkout, setCheckout] = useState(null);
+  const [hovering, setHovering] = useState(null);
+  const [name,  setName]  = useState('');
+  const [guests, setGuests] = useState('2');
+  const [msg, setMsg] = useState('');
+
+  function handleSelect(date) {
+    if (!checkin || (checkin && checkout)) {
+      setCheckin(date); setCheckout(null);
+    } else {
+      if (date <= checkin) { setCheckin(date); setCheckout(null); return; }
+      const nights = diffDays(checkin, date);
+      if (nights < 7) { setMsg('Soggiorno minimo: 7 notti'); return; }
+      setMsg('');
+      setCheckout(date);
+    }
+  }
+
+  const nights = checkin && checkout ? diffDays(checkin, checkout) : 0;
+  const weeks  = nights >= 7 ? Math.round(nights / 7) : 0;
+  const price  = weeks * 910;
+
+  const nextMonth = () => {
+    if (viewMonth === 11) { setViewYear(y => y + 1); setViewMonth(0); }
+    else setViewMonth(m => m + 1);
+  };
+  const prevMonth = () => {
+    const cur = new Date(viewYear, viewMonth, 1);
+    if (cur <= today) return;
+    if (viewMonth === 0) { setViewYear(y => y - 1); setViewMonth(11); }
+    else setViewMonth(m => m - 1);
+  };
+  const month2 = viewMonth === 11 ? 0 : viewMonth + 1;
+  const year2  = viewMonth === 11 ? viewYear + 1 : viewYear;
+
+  function buildWhatsApp() {
+    const text = `Ciao Paola! Vorrei prenotare il tuo appartamento a La Thuile.\n\n📅 Arrivo: ${formatDate(checkin)}\n📅 Partenza: ${formatDate(checkout)}\n🌙 Notti: ${nights}\n👥 Ospiti: ${guests}\n👤 Nome: ${name || '—'}\n\n💰 Totale stimato: €${price}\n\nAttendo conferma disponibilità!`;
+    return `https://wa.me/+39XXXXXXXXXX?text=${encodeURIComponent(text)}`;
+  }
+
+  return (
+    <section id="booking" style={{ background: 'var(--cream2)', padding: '80px 5vw' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+        <p style={{ color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 12, textAlign: 'center' }}>DISPONIBILITÀ & PREZZI</p>
+        <h2 style={{ textAlign: 'center', fontSize: 'clamp(24px, 3vw, 38px)', marginBottom: 8, color: 'var(--dark)' }}>Prenota il tuo soggiorno</h2>
+        <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: 14, marginBottom: 48 }}>Soggiorno minimo 7 notti · €910/settimana</p>
+
+        {/* Calendar nav */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+          <button onClick={prevMonth} style={{ background: 'none', border: '1px solid var(--cream2)', padding: '6px 14px', cursor: 'pointer', borderRadius: 2, fontSize: 18, color: 'var(--green)' }}>‹</button>
+          <div style={{ display: 'flex', gap: 40, flex: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <CalendarMonth year={viewYear} month={viewMonth}
+              checkin={checkin} checkout={checkout} hovering={hovering}
+              onSelect={handleSelect} onHover={setHovering} />
+            <CalendarMonth year={year2} month={month2}
+              checkin={checkin} checkout={checkout} hovering={hovering}
+              onSelect={handleSelect} onHover={setHovering} />
+          </div>
+          <button onClick={nextMonth} style={{ background: 'none', border: '1px solid var(--cream2)', padding: '6px 14px', cursor: 'pointer', borderRadius: 2, fontSize: 18, color: 'var(--green)' }}>›</button>
+        </div>
+
+        {/* Legend */}
+        <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 36, flexWrap: 'wrap' }}>
+          {[['var(--green)', '#fff', 'Arrivo / Partenza'], ['oklch(0.88 0.05 150)', 'var(--green)', 'Periodo selezionato'], ['oklch(0.92 0.01 60)', '#aaa', 'Non disponibile']].map(([bg, col, lbl]) => (
+            <div key={lbl} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--muted)' }}>
+              <div style={{ width: 16, height: 16, borderRadius: 3, background: bg }} />
+              {lbl}
+            </div>
+          ))}
+        </div>
+
+        {msg && <p style={{ textAlign: 'center', color: '#c0392b', marginBottom: 16, fontSize: 13 }}>{msg}</p>}
+
+        {/* Summary + form */}
+        {checkin && checkout && (
+          <div style={{
+            background: '#fff', borderRadius: 6, padding: 32,
+            boxShadow: '0 2px 24px oklch(0.2 0.03 60 / 0.08)',
+            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24,
+          }}>
+            <div>
+              <h3 style={{ fontSize: 18, marginBottom: 16, color: 'var(--dark)' }}>Riepilogo</h3>
+              <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
+                {[
+                  ['Arrivo', formatDate(checkin)],
+                  ['Partenza', formatDate(checkout)],
+                  ['Notti', nights],
+                  ['Settimane', weeks],
+                ].map(([k, v]) => (
+                  <tr key={k} style={{ borderBottom: '1px solid var(--cream2)' }}>
+                    <td style={{ padding: '8px 0', color: 'var(--muted)' }}>{k}</td>
+                    <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 500 }}>{v}</td>
+                  </tr>
+                ))}
+                <tr>
+                  <td style={{ padding: '12px 0', fontWeight: 500, fontSize: 16 }}>Totale stimato</td>
+                  <td style={{ padding: '12px 0', textAlign: 'right', fontWeight: 600, fontSize: 22, color: 'var(--green)' }}>€{price}</td>
+                </tr>
+              </table>
+              <p style={{ fontSize: 11, color: 'var(--muted)', marginTop: 8 }}>* Il prezzo definitivo verrà confermato da Paola</p>
+            </div>
+            <div>
+              <h3 style={{ fontSize: 18, marginBottom: 16, color: 'var(--dark)' }}>I tuoi dati</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <input value={name} onChange={e => setName(e.target.value)}
+                  placeholder="Il tuo nome"
+                  style={{ padding: '12px 14px', border: '1px solid var(--cream2)', borderRadius: 3, fontSize: 14, fontFamily: 'Jost, sans-serif', outline: 'none' }} />
+                <select value={guests} onChange={e => setGuests(e.target.value)}
+                  style={{ padding: '12px 14px', border: '1px solid var(--cream2)', borderRadius: 3, fontSize: 14, fontFamily: 'Jost, sans-serif', background: '#fff', outline: 'none' }}>
+                  {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} ospite{n > 1 ? 'i' : ''}</option>)}
+                </select>
+                <a href={buildWhatsApp()} target="_blank" rel="noopener noreferrer" style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                  padding: '14px', borderRadius: 3,
+                  background: '#25d366', color: '#fff',
+                  textDecoration: 'none', fontWeight: 500, fontSize: 15,
+                  letterSpacing: '0.04em',
+                }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.998 2C6.477 2 2 6.477 2 12c0 1.821.487 3.53 1.338 5.007L2.04 22l5.134-1.347A9.955 9.955 0 0011.998 22C17.52 22 22 17.523 22 12S17.52 2 11.998 2zm.002 18.118a8.12 8.12 0 01-4.372-1.268l-.313-.186-3.048.8.814-2.977-.204-.325A8.12 8.12 0 013.882 12c0-4.481 3.638-8.118 8.118-8.118s8.118 3.637 8.118 8.118-3.637 8.118-8.118 8.118z"/></svg>
+                  Contatta Paola su WhatsApp
+                </a>
+                <button onClick={() => { setCheckin(null); setCheckout(null); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--muted)', fontSize: 12, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                  Cancella selezione
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {(!checkin || !checkout) && (
+          <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
+            {!checkin ? 'Seleziona la data di arrivo sul calendario' : 'Ora seleziona la data di partenza (min. 7 notti)'}
+          </p>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ── LOCATION ── */
+function Location() {
+  return (
+    <section style={{ padding: '80px 5vw', maxWidth: 960, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
+      <img src="uploads/462009127-03d89294.jpg" style={{ width: '100%', borderRadius: 4, objectFit: 'cover', maxHeight: 420 }} alt="La Thuile" />
+      <div>
+        <p style={{ color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 16 }}>DOVE SIAMO</p>
+        <h2 style={{ fontSize: 'clamp(24px, 3vw, 38px)', lineHeight: 1.25, marginBottom: 24, color: 'var(--dark)' }}>La Thuile,<br /><em>Frazione Arly</em></h2>
+        <p style={{ lineHeight: 1.9, fontSize: 15, marginBottom: 16, color: 'var(--text)' }}>
+          Ottima posizione per raggiungere gli impianti di risalita, ristoranti, parco giochi, supermercato e negozi — a piedi, in navetta gratuita, in bici o in auto.
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 24 }}>
+          {[['🎿','Piste da sci','Adiacenti alla struttura'], ['🚌','Navetta gratuita','Dal paese'], ['🛒','Supermercato','A pochi minuti a piedi'], ['🌲','Bosco & Torrente','Vista diretta dall\'appartamento']].map(([ic, t, s]) => (
+            <div key={t} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+              <span style={{ fontSize: 18, marginTop: 1 }}>{ic}</span>
+              <div>
+                <div style={{ fontWeight: 500, fontSize: 14, color: 'var(--dark)' }}>{t}</div>
+                <div style={{ fontSize: 13, color: 'var(--muted)' }}>{s}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── FOOTER ── */
+function Footer() {
+  return (
+    <footer style={{ background: 'var(--dark)', padding: '48px 5vw', textAlign: 'center' }}>
+      <p style={{ fontFamily: 'Playfair Display, serif', fontSize: 22, color: '#fff', marginBottom: 8 }}>Paola Guest <em>Thuile</em></p>
+      <p style={{ color: 'oklch(0.7 0.02 60)', fontSize: 13, marginBottom: 24 }}>Frazione Arly · La Thuile · Valle d'Aosta · Italia</p>
+      <a href="#booking" style={{
+        display: 'inline-block', padding: '12px 32px',
+        background: 'var(--green)', color: '#fff',
+        textDecoration: 'none', letterSpacing: '0.12em', fontSize: 13,
+        fontWeight: 500, borderRadius: 2, marginBottom: 32,
+      }}>PRENOTA ORA</a>
+      <p style={{ color: 'oklch(0.5 0.02 60)', fontSize: 12 }}>Lingue parlate: Italiano · English · Français</p>
+    </footer>
+  );
+}
+
+/* ── SIDE FRAMES ── */
+function SideFrames() {
+  const [scroll, setScroll] = useState(0);
+
+  useEffect(() => {
+    const fn = () => setScroll(window.scrollY);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  const maxScroll = document.body ? document.body.scrollHeight - window.innerHeight : 1000;
+  const progress = maxScroll > 0 ? scroll / maxScroll : 0;
+  const seg = (base, factor) => base + progress * factor;
+
+  const color = 'oklch(0.38 0.10 150)';
+  const dim   = 'oklch(0.38 0.10 150 / 0.45)';
+
+  const frameStyle = (side) => ({
+    position: 'fixed',
+    top: 0, bottom: 0,
+    [side]: 14,
+    width: 18,
+    zIndex: 90,
+    pointerEvents: 'none',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 0,
+  });
+
+  const segments = [
+    { h: `${12 + seg(0, 8)}vh`,  opacity: 0.45 + progress * 0.2 },
+    { h: `${3 + seg(0, -4)}vh`,  opacity: 1    },
+    { h: `${18 + seg(0, -12)}vh`,opacity: 0.38 + progress * 0.15 },
+    { h: `${2}vh`,               opacity: 1    },
+    { h: `${20 + seg(0, 14)}vh`, opacity: 0.35 },
+    { h: `${2}vh`,               opacity: 1    },
+    { h: `${18 + seg(0, -8)}vh`, opacity: 0.40 },
+    { h: `${3 + seg(0, 6)}vh`,   opacity: 1    },
+    { h: `${22 + seg(0, -10)}vh`,opacity: 0.38 },
+  ];
+
+  const FrameBar = ({ side }) => (
+    <div style={frameStyle(side)}>
+      <div style={{ width: 5, height: 5, borderRadius: '50%', background: color, opacity: 0.8, marginBottom: 4, transform: `translateY(${scroll * 0.04}px)` }} />
+      {segments.map((s, i) => (
+        <div key={i} style={{
+          width: i % 2 === 1 ? 3 : 2,
+          height: s.h,
+          background: i % 2 === 1 ? color : dim,
+          opacity: s.opacity,
+          transition: 'height 0.1s ease-out, opacity 0.3s',
+          transform: `translateY(${(i % 3 - 1) * progress * 12}px)`,
+          flexShrink: 0,
+        }} />
+      ))}
+      <div style={{ width: 5, height: 5, borderRadius: '50%', background: color, opacity: 0.8, marginTop: 4, transform: `translateY(${-scroll * 0.04}px)`, }} />
+    </div>
+  );
+
+  return (
+    <>
+      <FrameBar side="left" />
+      <FrameBar side="right" />
+    </>
+  );
+}
+
+/* ── APP ── */
+function App() {
+  return (
+    <>
+      <SideFrames />
+      <Nav />
+      <Hero />
+      <Intro />
+      <WhyChoose />
+      <Amenities />
+      <Gallery />
+      <Reviews />
+      <Location />
+      <Booking />
+      <Footer />
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
