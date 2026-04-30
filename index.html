@@ -46,6 +46,93 @@
     }
     h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 400; }
     #root { overflow-x: hidden; }
+
+    /* ───── MOBILE OPTIMIZATIONS ───── */
+    @media (max-width: 768px) {
+      /* Forza grid a singola colonna su mobile */
+      [data-mobile-stack] {
+        grid-template-columns: 1fr !important;
+        gap: 32px !important;
+      }
+      /* Riduci padding generale */
+      [data-mobile-pad] {
+        padding-left: 5vw !important;
+        padding-right: 5vw !important;
+        padding-top: 56px !important;
+        padding-bottom: 56px !important;
+      }
+      /* Hero più compatto */
+      [data-mobile-hero] {
+        padding: 24px !important;
+      }
+      [data-mobile-hero] h1 {
+        font-size: clamp(32px, 9vw, 56px) !important;
+        line-height: 1.05 !important;
+      }
+      [data-mobile-hero] [data-hero-sub] {
+        font-size: 15px !important;
+      }
+      /* Calendari: uno alla volta su mobile */
+      [data-mobile-cal-wrap] {
+        flex-direction: column !important;
+      }
+      [data-mobile-cal-wrap] > div {
+        flex: 1 1 100% !important;
+        min-width: 0 !important;
+      }
+      /* Booking form: stack i campi */
+      [data-mobile-booking-form] {
+        grid-template-columns: 1fr !important;
+        padding: 20px !important;
+      }
+      /* Galleria: 2 colonne su mobile invece di griglia complessa */
+      [data-mobile-gallery] {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+      }
+      [data-mobile-gallery] > * {
+        grid-row: auto !important;
+        grid-column: auto !important;
+      }
+      /* Why choose, amenities, reviews: 1 colonna */
+      [data-mobile-1col] {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+      }
+      /* Cornici laterali: nascondi su mobile */
+      [data-side-frame] {
+        display: none !important;
+      }
+      /* Nav menu hamburger style */
+      [data-mobile-nav-links] {
+        display: none !important;
+      }
+      [data-mobile-nav-cta] {
+        padding: 8px 16px !important;
+        font-size: 12px !important;
+      }
+      /* Footer */
+      [data-mobile-footer-grid] {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+        text-align: center !important;
+      }
+      /* Translator widget */
+      [data-translator] {
+        top: 8px !important;
+        right: 8px !important;
+        transform: scale(0.85);
+        transform-origin: top right;
+      }
+      /* Body text smaller margins */
+      section { overflow-x: hidden; }
+    }
+
+    @media (max-width: 480px) {
+      [data-mobile-gallery] {
+        grid-template-columns: 1fr !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -130,8 +217,8 @@ function Nav() {
         transition: 'color 0.4s',
       }}>Paola Guest <em>Thuile</em></span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <div id="google_translate_element" style={{ transform: 'scale(0.85)', transformOrigin: 'right' }}></div>
-        <a href="#booking" style={{
+        <div id="google_translate_element" data-mobile-nav-links style={{ transform: 'scale(0.85)', transformOrigin: 'right' }}></div>
+        <a href="#booking" data-mobile-nav-cta style={{
           padding: '8px 22px', borderRadius: 2,
           background: solid ? 'var(--green)' : 'rgba(255,255,255,0.18)',
           border: '1px solid',
@@ -224,7 +311,7 @@ function Hero() {
 /* ── INTRO ── */
 function Intro() {
   return (
-    <section style={{ padding: '80px 5vw', maxWidth: 960, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
+    <section data-mobile-stack data-mobile-pad style={{ padding: '80px 5vw', maxWidth: 960, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
       <div>
         <p style={{ color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 16 }}>L'APPARTAMENTO</p>
         <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', lineHeight: 1.25, marginBottom: 24, color: 'var(--dark)' }}>
@@ -304,7 +391,7 @@ function WhyChoose() {
         <p style={{ ...fadeIn(0.2), textAlign: 'center', color: 'var(--muted)', fontSize: 15, marginBottom: 48, maxWidth: 680, margin: '0 auto 48px' }}>
           Non un semplice appartamento, ma un'esperienza alpina autentica pensata per chi cerca comfort, tranquillità e vicinanza alla natura.
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 32 }}>
+        <div data-mobile-1col style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 32 }}>
           {reasons.map((r, i) => (
             <div key={i} style={{
               ...fadeIn(0.3 + i * 0.1),
@@ -349,7 +436,7 @@ function Reviews() {
         <h2 style={{ ...fadeIn(0.1), textAlign: 'center', fontSize: 'clamp(28px, 4vw, 42px)', marginBottom: 48, color: 'var(--dark)' }}>
           Recensioni verificate
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
+        <div data-mobile-1col style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 24 }}>
           {REVIEWS.map((r, i) => (
             <div key={i} style={{
               ...fadeIn(0.2 + i * 0.08),
@@ -409,7 +496,7 @@ function Amenities() {
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
         <p style={{ ...fadeIn(0.1), color: 'var(--cream)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 12, textAlign: 'center' }}>DOTAZIONI</p>
         <h2 style={{ ...fadeIn(0.2), color: 'var(--cream)', textAlign: 'center', fontSize: 'clamp(24px, 3vw, 38px)', marginBottom: 48 }}>Tutto il comfort per la vostra vacanza</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 20 }}>
+        <div data-mobile-1col style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 20 }}>
           {AMENITIES.map((a, i) => (
             <div key={i} style={{
               ...fadeIn(0.3 + i * 0.06),
@@ -431,7 +518,7 @@ function Amenities() {
 function Gallery() {
   const [open, setOpen] = useState(null);
   return (
-    <section id="gallery" style={{ padding: '80px 5vw', maxWidth: 1200, margin: '0 auto' }}>
+    <section id="gallery" data-mobile-pad style={{ padding: '80px 5vw', maxWidth: 1200, margin: '0 auto' }}>
       <p style={{ color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 12, textAlign: 'center' }}>GALLERIA</p>
       <h2 style={{ textAlign: 'center', fontSize: 'clamp(24px, 3vw, 38px)', marginBottom: 40, color: 'var(--dark)' }}>La casa e i dintorni</h2>
       <div style={{ columns: '3 280px', gap: 10 }}>
@@ -609,7 +696,7 @@ function Booking() {
         <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: 14, marginBottom: 48 }}>Soggiorno minimo 7 notti · €910/settimana</p>
 
         {/* Calendar nav */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+      <div data-mobile-cal-wrap style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <button onClick={prevMonth} style={{ background: 'none', border: '1px solid var(--cream2)', padding: '6px 14px', cursor: 'pointer', borderRadius: 2, fontSize: 18, color: 'var(--green)' }}>‹</button>
           <div style={{ display: 'flex', gap: 40, flex: 1, justifyContent: 'center', flexWrap: 'wrap' }}>
             <CalendarMonth year={viewYear} month={viewMonth}
@@ -636,7 +723,7 @@ function Booking() {
 
         {/* Summary + form */}
         {checkin && checkout && (
-          <div style={{
+          <div data-mobile-booking-form style={{
             background: '#fff', borderRadius: 6, padding: 32,
             boxShadow: '0 2px 24px oklch(0.2 0.03 60 / 0.08)',
             display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24,
@@ -704,7 +791,7 @@ function Booking() {
 /* ── LOCATION ── */
 function Location() {
   return (
-    <section style={{ padding: '80px 5vw', maxWidth: 960, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
+    <section data-mobile-stack data-mobile-pad style={{ padding: '80px 5vw', maxWidth: 960, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'center' }}>
       <img src="uploads/462009127-03d89294.jpg" style={{ width: '100%', borderRadius: 4, objectFit: 'cover', maxHeight: 420 }} alt="La Thuile" />
       <div>
         <p style={{ color: 'var(--amber)', letterSpacing: '0.25em', fontSize: 11, fontWeight: 500, marginBottom: 16 }}>DOVE SIAMO</p>
@@ -775,6 +862,7 @@ function SideFrames() {
     gap: 0,
   });
 
+  // hide on mobile via data attr
   const segments = [
     { h: `${12 + seg(0, 8)}vh`,  opacity: 0.45 + progress * 0.2 },
     { h: `${3 + seg(0, -4)}vh`,  opacity: 1    },
@@ -788,7 +876,7 @@ function SideFrames() {
   ];
 
   const FrameBar = ({ side }) => (
-    <div style={frameStyle(side)}>
+    <div data-side-frame style={frameStyle(side)}>
       <div style={{ width: 5, height: 5, borderRadius: '50%', background: color, opacity: 0.8, marginBottom: 4, transform: `translateY(${scroll * 0.04}px)` }} />
       {segments.map((s, i) => (
         <div key={i} style={{
